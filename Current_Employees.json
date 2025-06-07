@@ -6,5 +6,21 @@
         "salary": 70000.0,
         "department": "IT",
         "location": "Perth"
+    },
+    {
+        "name": "Mario Gomez",
+        "age": 30,
+        "position": "Software Developer",
+        "salary": 30000.0,
+        "department": "Technology",
+        "location": "Perth"
+    },
+    {
+        "name": "Paula Murcia",
+        "age": 22,
+        "position": "Designer",
+        "salary": 40000.0,
+        "department": "Marketing",
+        "location": "Melbourne"
     }
 ]
