@@ -1,0 +1,121 @@
+
+
+CLASS Employee:
+    PRIVATE name, age, position, salary
+    PUBLIC department, location
+
+    METHOD __init__(...):  # Initialize all fields
+        ASSIGN values
+
+    METHOD to_dict():
+        RETURN dictionary of employee attributes
+
+    STATIC METHOD from_dict(data):
+        RETURN new Employee instance
+
+CLASS EmployeeDatabase:
+    ATTRIBUTE file_path = 'Current_Employees.json'
+
+    METHOD load_employees():
+        TRY to open file
+            READ all records
+            CONVERT each record to Employee instance
+        EXCEPT FileNotFoundError:
+            RETURN empty list
+
+    METHOD save_employees(employee_list):
+        CONVERT all Employee instances to list of dicts
+        WRITE to file (overwrite)
+
+    METHOD add_employee(employee):
+        LOAD current list
+        IF employee name/position already exists:
+            RAISE validation error
+        ADD to list
+        SAVE updated list
+
+    METHOD update_employee(name):
+        LOAD current list
+        FIND employee by name
+        IF found:
+            ASK which attribute to update
+            UPDATE value
+            SAVE updated list
+
+    METHOD delete_employee(name):
+        LOAD list
+        REMOVE employee by name
+        SAVE list
+
+    METHOD search_employee(name):
+        LOAD list
+        RETURN employee if found
+
+    METHOD sort_employees(by_field):
+        LOAD list
+        SORT by field
+        RETURN sorted list
+
+
+
+    USER INTERFACE/TERMINAL INTERACTION
+
+    FUNCTION display_menu():
+    PRINT options:
+        1. Add Employee
+        2. View All Employees
+        3. Update Employee
+        4. Delete Employee
+        5. Search Employee
+        6. Sort Employees
+        0. Exit
+
+    FUNCTION display_employee(employee):
+        PRINT nicely formatted employee details
+
+    FUNCTION display_all_employees(employee_list):
+        FOR employee IN list:
+            CALL display_employee(employee)
+
+
+    
+    FUNCTION main():
+    WHILE True:
+        CALL display_menu()
+        READ user_choice
+
+        IF choice == 1:
+            PROMPT for new employee data
+            CREATE Employee instance
+            TRY:
+                ADD to database
+            CATCH validation error:
+                DISPLAY message
+
+        ELIF choice == 2:
+            LOAD and display all employees
+
+        ELIF choice == 3:
+            ASK for name to update
+            CALL update_employee()
+
+        ELIF choice == 4:
+            ASK for name to delete
+            CALL delete_employee()
+
+        ELIF choice == 5:
+            ASK for name to search
+            CALL search_employee()
+
+        ELIF choice == 6:
+            ASK for sorting criteria
+            CALL sort_employees()
+
+        ELIF choice == 0:
+            BREAK
+
+        ELSE:
+            PRINT "Invalid option. Try again."
+
+
+
