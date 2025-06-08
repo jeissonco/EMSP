@@ -120,6 +120,9 @@ class EmployeeDatabase:
         #list to store the employee objects
         employees = []
 
+        if not os.path.exists(self.file_path):
+            return employees
+
         #open the file in read mode = 'r'
         try:
             with open(self.file_path, 'r') as file:
@@ -129,11 +132,10 @@ class EmployeeDatabase:
                 #Converts dicts from file to Employee objects
                 for emp_dict in data:
                     employee = Employee.from_dict(emp_dict)
-                    employees.append(employee)
-            return employees # Ensure employees list is always returned
+                    employees.append(employee)    
         except (json.JSONDecodeError, FileNotFoundError) as error:
             print(f'It has been an error loading the data: {error}. Starting with an empty database.')
-            return [] # Return empty list if loading fails to allow program to continue
+        return employees # Ensure employees list is always returned
 
 
     ######################## SAVE EMPLOYEES ##########################
@@ -157,10 +159,11 @@ class EmployeeDatabase:
             #loading the current list of employees
             employees = self.load_employees()
             
+            #validation of proper input name 
+            name, index = validation(index)
+
             for employee in employees:
                 data = employee.to_dict()
-                #validation of proper input name 
-                name, index = validation(index)
                 if data['name'] == name:
                     raise Exception
             
@@ -175,7 +178,6 @@ class EmployeeDatabase:
             
             location, index =  validation(index)
     
-            # Check for duplication (name and position ) to be done
             new_employee = Employee(name, age, position, salary, department, location)
             employees.append(new_employee)
             self.save_employees(employees)
@@ -203,6 +205,70 @@ class EmployeeDatabase:
             data = employee.to_dict()
             print(f"Name: {data['name']}, Age: {data['age']}, Position: {data['position']}, "
                   f"Salary: ${data['salary']:.2f}, Department: {data['department']}, Location: {data['location']}")
+
+    ##################### UPDATE EMPLOYEES ########################
+
+    def update_employee(self):
+        clear_console()
+        user_fields = ['name', 'age', 'position', 'salary', 'department', 'location']
+        print("################ UPDATE MENU ################\n")
+        emp_name=input("Enter the employee name you want to update: ").title()
+
+        
+        print('What value do you want to update?')
+        print('1. Name')
+        print('2. Age')
+        print('3. Position')
+        print('4. Salary')
+        print('5. Department')
+        print('6. Location')
+        print('0. Return to main menu')
+        choice = int(input("Enter an option: "))
+        #this loads the data base
+        employees = self.load_employees()
+        index = 0
+
+        for employee in employees:
+            data = employee.to_dict()
+            if data['name'] == emp_name:
+                print('--------------------------------------')
+                print(f'Updating {user_fields[choice-1]}')
+
+                if choice == 1:
+                    updating_info = validation(index)
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                elif choice == 2:
+                    updating_info = valid_age()
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                elif choice == 3:
+                    updating_info = validation(index)
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                elif choice == 4:
+                    updating_info = valid_salary()
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                elif choice == 5:
+                    updating_info = validation(index)
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                elif choice == 6:
+                    updating_info = validation(index)
+                    data[user_fields[choice-1]] = updating_info
+                    print("Done!")
+                else:
+                    break
+                """
+                updating_info = input(f"Enter the new {user_fields[choice-1]}: ")
+                
+                """
+            else:
+                print(f"Employee {emp_name} not found")
+                input("Press Enter to continue...")
+                break
+
 
 
 ####################  functions ##########################
@@ -237,7 +303,7 @@ def main():
             database.view_all_employees()
             input("Press Enter to continue...") 
         elif choice == "3":
-            print("Function not yet implemented.")
+            database.update_employee()
             input("Press Enter to continue...")
         elif choice == "4":
             print("Function not yet implemented.")

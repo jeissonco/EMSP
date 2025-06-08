@@ -1,26 +1,26 @@
 [
     {
-        "name": "Jeisson Nino",
-        "age": 30,
-        "position": "Jr Developer",
-        "salary": 70000.0,
-        "department": "IT",
+        "name": "Kevin",
+        "age": 24,
+        "position": "Accountant",
+        "salary": 56000.0,
+        "department": "Finance",
         "location": "Perth"
     },
     {
         "name": "Mario Gomez",
-        "age": 30,
-        "position": "Software Developer",
-        "salary": 30000.0,
-        "department": "Technology",
+        "age": 23,
+        "position": "Developer",
+        "salary": 56000.0,
+        "department": "It",
         "location": "Perth"
     },
     {
         "name": "Paula Murcia",
-        "age": 22,
-        "position": "Designer",
-        "salary": 40000.0,
-        "department": "Marketing",
-        "location": "Melbourne"
+        "age": 23,
+        "position": "Marketing Specialist",
+        "salary": 60000.0,
+        "department": "Marketintg",
+        "location": "Perth"
     }
 ]
