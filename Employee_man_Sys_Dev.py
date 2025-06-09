@@ -6,12 +6,14 @@
 # v2. Modifying the structure of the program using 
 # a design pattern MVC (model view controller) advised by ChatGPT           03/06/25
 # V3. Centralized version of the valid input function to cover all the inputs, rather than
-#     having multiple functions just changing what it was printed
+#     having multiple functions just changing what it was printed           07/06/25
+# V4. Update employees method working 
 
 ######################  Libraries  #######################
 import os
 import json
 import re
+from operator import itemgetter
 
 ###################  Classes  ############################
 
@@ -210,66 +212,196 @@ class EmployeeDatabase:
 
     def update_employee(self):
         clear_console()
+        #this loads the data base
+        employees = self.load_employees()
+        updated = False
         user_fields = ['name', 'age', 'position', 'salary', 'department', 'location']
+
         print("################ UPDATE MENU ################\n")
         emp_name=input("Enter the employee name you want to update: ").title()
 
-        
-        print('What value do you want to update?')
-        print('1. Name')
-        print('2. Age')
-        print('3. Position')
-        print('4. Salary')
-        print('5. Department')
-        print('6. Location')
-        print('0. Return to main menu')
-        choice = int(input("Enter an option: "))
+        for index, employee in enumerate(employees):
+            data = employee.to_dict()
+            if data['name'] == emp_name:
+                
+
+                print('What value do you want to update?')
+                print('1. Name')
+                print('2. Age')
+                print('3. Position')
+                print('4. Salary')
+                print('5. Department')
+                print('6. Location')
+                print('0. Return to main menu')
+
+                try:
+                    choice = int(input('Choose an option: '))
+                    if choice == 0:
+                        print("Returning to main menu...")
+                        return
+                    if not (1<= choice <=6):
+                        print('Invalid choice. Please enter a number (1-6) or 0 to leave')
+                        input('Press enter to continue...')
+                        return
+                    
+                    print('--------------------------------------')
+                    print(f'Updating {user_fields[choice-1]}')
+
+                    if choice == 1:
+                        updating_info, _ = validation(0)
+                        data['name'] = updating_info
+                        updated = True
+                    elif choice == 2:
+                        updating_info = valid_age()
+                        data['age'] = updating_info
+                        updated = True
+                    elif choice == 3:
+                        updating_info, _ = validation(1)
+                        data['position'] = updating_info
+                        updated = True
+                    elif choice == 4:
+                        updating_info = valid_salary()
+                        data['salary'] = updating_info
+                        updated = True
+                    elif choice == 5:
+                        updating_info, _ = validation(2)
+                        data['department'] = updating_info
+                        updated = True
+                    elif choice == 6:
+                        updating_info, _ = validation(3)
+                        data['location'] = updating_info
+                        updated = True
+                    
+                    #Once we found that there was a change to the employee info, change will be made to the jsonfile 
+                    if updated:
+                        employees[index] = Employee.from_dict(data)
+                        self.save_employees(employees)
+                        print('Done!!!')
+                        return
+                    else:
+                        print('No changes have been applied')
+
+                except ValueError:
+                    print('Invalid input. Enter a number please')
+
+            
+        if not updated:
+            print(f"Employee {emp_name} not found")
+            return
+    
+    ############################### DELETE EMPLOYEES ###########################################3
+
+    def delete_employee(self):
+        clear_console()
         #this loads the data base
         employees = self.load_employees()
-        index = 0
+        new_emp_list = []
+        #Variable to check if found or not
+        found=False
+        print("################ DELETE MENU ################\n")
+        emp_name_delete=input("Enter the employee name you want to Delete: ").title()
 
         for employee in employees:
             data = employee.to_dict()
-            if data['name'] == emp_name:
-                print('--------------------------------------')
-                print(f'Updating {user_fields[choice-1]}')
+            if data['name'] != emp_name_delete:
+                #Creating a new list of employees without the employee wanted to be deleted
+                new_emp_list.append(employee)
+                found = True
+            
+            if not found:
+                print(f'Employee {emp_name_delete} not found')
+                return
+        
+        #passing the new employee list to the json file
+        self.save_employees(new_emp_list)
+        return     
+        
+        
+    ########################## SEARCH EMPLOYEE ######################################
+    def search_employee(self):
 
-                if choice == 1:
-                    updating_info = validation(index)
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                elif choice == 2:
-                    updating_info = valid_age()
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                elif choice == 3:
-                    updating_info = validation(index)
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                elif choice == 4:
-                    updating_info = valid_salary()
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                elif choice == 5:
-                    updating_info = validation(index)
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                elif choice == 6:
-                    updating_info = validation(index)
-                    data[user_fields[choice-1]] = updating_info
-                    print("Done!")
-                else:
-                    break
-                """
-                updating_info = input(f"Enter the new {user_fields[choice-1]}: ")
-                
-                """
+        clear_console()
+        #this loads the data base
+        employees = self.load_employees()
+        #Variable to check if found or not
+        found=False
+        print("################ SEARCH MENU ################\n")
+        emp_name_delete=input("Enter the employee name you want to Search: ").title()
+
+        for employee in employees:
+            data = employee.to_dict()
+            if data['name'] == emp_name_delete:
+                found = True
+                print(f"Name: {data['name']} \nAge: {data['age']}\nPosition: {data['position']}"
+                  f"\nSalary: ${data['salary']:.2f} \nDepartment: {data['department']} \nLocation: {data['location']}")
+                return
+        if not found:
+            print(f'Employee {emp_name_delete} not found in the database')
+            return
+            
+
+    ########################## SORTING LISTS OF EMPLOYEES ###########################
+    def sort_employee(self):
+        clear_console()
+
+        #this loads the data base as a list of dictionaries not object, allowing the sorting method later
+        with open('Current_Employees.json', 'r') as file:
+            employees = json.load(file)
+        #employees= self.load_employees()
+        #new_sorted_employees = []
+        updated = False
+        user_fields = ['name', 'age', 'position', 'salary', 'department', 'location']
+        print("################ SORTING MENU ################\n")
+        print('1. sorting by name')
+        print('2. sorting by age')
+        print('3. sorting by position')
+        print('4. sorting by salary')
+        print('5. sorting by Department')
+        print('6. sorting by Location')
+        print('0. Exit')
+        
+        try:
+            choice = int(input('Choose an option: '))
+            if choice == 0:
+                print("Returning to main menu...")
+                return
+            if not (1<= choice <=6):
+                print('Invalid choice. Please enter a number (1-6) or 0 to leave')
+                input('Press enter to continue...')
+                return
+                    
+            print('--------------------------------------')
+            print(f'Sorting list of employees by --> {user_fields[choice-1]}')
+
+            if choice == 1:
+                sorted_file=sorted(employees, key=lambda x: x['name'])
+                updated = True
+            elif choice == 2:
+                sorted_file=sorted(employees, key=lambda x: x['age'])
+                updated = True
+            elif choice == 3:
+                sorted_file=sorted(employees, key=lambda x: x['position'])
+                updated = True
+            elif choice == 4:
+                sorted_file=sorted(employees, key=lambda x: x['salary'])
+                updated = True
+            elif choice == 5:
+                sorted_file=sorted(employees, key=lambda x: x['department'])
+                updated = True
+            elif choice == 6:
+                sorted_file=sorted(employees, key=lambda x: x['location'])
+                updated = True
+                    
+            #Once we found that there was a change to the employee info, change will be made to the jsonfile 
+            if updated:     
+                with open('Current_Employees.json', 'w') as file:
+                    json.dump(sorted_file, file, indent=4)
+                return
             else:
-                print(f"Employee {emp_name} not found")
-                input("Press Enter to continue...")
-                break
+                print('No changes have been applied')
 
-
+        except ValueError:
+            print('Invalid input. Enter a number please')            
 
 ####################  functions ##########################
 
@@ -306,13 +438,13 @@ def main():
             database.update_employee()
             input("Press Enter to continue...")
         elif choice == "4":
-            print("Function not yet implemented.")
+            database.delete_employee()
             input("Press Enter to continue...")
         elif choice == "5":
-            print("Function not yet implemented.")
+            database.search_employee()
             input("Press Enter to continue...")
         elif choice == "6":
-            print("Function not yet implemented.")
+            database.sort_employee()
             input("Press Enter to continue...")
         elif choice == "0":
             print("Goodbye!")

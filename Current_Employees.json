@@ -1,19 +1,11 @@
 [
     {
-        "name": "Kevin",
-        "age": 24,
-        "position": "Accountant",
-        "salary": 56000.0,
-        "department": "Finance",
-        "location": "Perth"
-    },
-    {
         "name": "Mario Gomez",
         "age": 23,
         "position": "Developer",
         "salary": 56000.0,
         "department": "It",
-        "location": "Perth"
+        "location": "Brisbane"
     },
     {
         "name": "Paula Murcia",
@@ -21,6 +13,46 @@
         "position": "Marketing Specialist",
         "salary": 60000.0,
         "department": "Marketintg",
+        "location": "Perth"
+    },
+    {
+        "name": "Kevin",
+        "age": 24,
+        "position": "Sales Rep",
+        "salary": 56000.0,
+        "department": "Finance",
+        "location": "Perth"
+    },
+    {
+        "name": "Victoria Murillo",
+        "age": 26,
+        "position": "Intern",
+        "salary": 23000.0,
+        "department": "It",
+        "location": "Perth"
+    },
+    {
+        "name": "Javier Nino",
+        "age": 30,
+        "position": "Python Developer",
+        "salary": 70000.0,
+        "department": "It",
+        "location": "Perth"
+    },
+    {
+        "name": "Justin Bieber",
+        "age": 32,
+        "position": "Singer",
+        "salary": 100000.0,
+        "department": "Music",
+        "location": "La"
+    },
+    {
+        "name": "Andres Castro",
+        "age": 40,
+        "position": "Ceo",
+        "salary": 130000.0,
+        "department": "Board",
         "location": "Perth"
     }
 ]
